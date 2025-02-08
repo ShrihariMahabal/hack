@@ -6,7 +6,7 @@ export default function TravelLayout() {
             <Stack.Screen 
                 name="index" 
                 options={{
-                    headerTitle: 'Where To?',
+                    headerTitle: 'Lost & Found',
                     headerTitleAlign: 'center',
                     headerStyle: {
                         height: 80,
