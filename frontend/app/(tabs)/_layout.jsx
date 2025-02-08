@@ -103,6 +103,16 @@ export default function Layout() {
             tabBarLabel: "Account",
           }}
         />
+
+        <Tabs.Screen
+          name="events"
+          options={{
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="calendar" color={color} size={24} />
+            ),
+            tabBarLabel: "Events",
+          }}
+        />
       </Tabs>
       <StatusBar backgroundColor="#fcfcfc" style="dark" />
     </>
