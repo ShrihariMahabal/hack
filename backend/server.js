@@ -4,7 +4,7 @@ const dotenv = require("dotenv");
 const connectDB = require("./services/connect");
 const multer = require("multer");
 const path = require("path");
-const Issue = require('./models/Issue');
+const Issue = require("./models/Issue");
 const { createServer } = require("http");
 const { Server } = require("socket.io");
 
@@ -15,10 +15,10 @@ const io = new Server(server, {
   cors: {
     origin: "*",
   },
-  pingInterval: 10000,            // Send ping every 10 seconds
-  pingTimeout: 5000,             // Wait 5 seconds for pong
-  transports: ['websocket'],     // Force WebSocket only
-  upgrade: false,                // Disable transport upgrades
+  pingInterval: 10000, // Send ping every 10 seconds
+  pingTimeout: 5000, // Wait 5 seconds for pong
+  transports: ["websocket"], // Force WebSocket only
+  upgrade: false, // Disable transport upgrades
 });
 
 const mongoUri = process.env.MONG_URI;
@@ -28,7 +28,8 @@ if (!mongoUri) {
   process.exit(1);
 }
 var admin = require("firebase-admin");
-
+const llm = require("./routes/lmm");
+const gemini = require("./routes/gemini");
 // var serviceAccount = require("./spithack-dab01-firebase-adminsdk-fbsvc-ebd65a8127.json");
 
 // admin.initializeApp({
@@ -65,19 +66,19 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 io.on("connection", (socket) => {
   console.log(`User connected: ${socket.id}`);
-  
+
   // Broadcast to all clients that a new user connected
   io.emit("userCount", io.engine.clientsCount);
-  
+
   socket.on("sendForumMessage", (message) => {
     const messageWithId = {
       ...message,
       socketId: socket.id,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
     io.emit("receiveForumMessage", messageWithId);
   });
-  
+
   socket.on("disconnect", () => {
     console.log(`User disconnected: ${socket.id}`);
     io.emit("userCount", io.engine.clientsCount);
@@ -92,18 +93,22 @@ app.post("/forum", (req, res) => {
   try {
     const { username, message } = req.body;
     if (!username || !message) {
-      return res.status(400).json({ error: "Username and message are required" });
+      return res
+        .status(400)
+        .json({ error: "Username and message are required" });
     }
 
     const forumMessage = {
       username,
       message,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
-    
+
     io.emit("receiveForumMessage", forumMessage);
 
-    res.status(200).json({ success: true, message: "Forum message broadcasted" });
+    res
+      .status(200)
+      .json({ success: true, message: "Forum message broadcasted" });
   } catch (error) {
     console.error("Error in /forum endpoint:", error.message);
     res.status(500).json({ error: "Internal server error" });
