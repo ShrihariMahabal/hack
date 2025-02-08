@@ -34,7 +34,6 @@ app.use("/login", login);
 app.use("/llm", llm);
 app.use("/gemini", gemini);
 
-// Test Route
 app.get("/", (req, res) => {
   res.json({ message: "🚀 Express Server is Running!" });
 });
@@ -89,12 +88,12 @@ app.post("/api/report-issue", upload.single("image"), async (req, res) => {
     res.status(500).json({ error: "There was an issue reporting the problem" });
   }
 });
-app.get('/api/issues', async (req, res) => {
+app.get("/api/issues", async (req, res) => {
   try {
     const issues = await Issue.find();
     res.json(issues); // Send the issues as JSON response
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching issues', error });
+    res.status(500).json({ message: "Error fetching issues", error });
   }
 });
 app.post("/send-sos", async (req, res) => {
