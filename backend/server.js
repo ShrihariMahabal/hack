@@ -4,9 +4,11 @@ const dotenv = require("dotenv");
 const connectDB = require("./services/connect");
 const multer = require("multer");
 const path = require("path");
-const Issue = require('./models/Issue');
+const Issue = require("./models/Issue");
+const llm = require("./routes/lmm");
 dotenv.config();
 const app = express();
+const gemini = require("./routes/gemini");
 
 const mongoUri = process.env.MONG_URI;
 
@@ -27,7 +29,10 @@ const port = 5001;
 app.use(cors());
 app.use(express.json());
 const login = require("./routes/login");
+
 app.use("/login", login);
+app.use("/llm", llm);
+app.use("/gemini", gemini);
 
 // Test Route
 app.get("/", (req, res) => {
@@ -49,7 +54,7 @@ const upload = multer({ storage });
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Route to handle form submission
-app.post("/api/report-issue", upload.single('image'), async (req, res) => {
+app.post("/api/report-issue", upload.single("image"), async (req, res) => {
   try {
     console.log("Request received");
     console.log("Body:", req.body); // Log form fields (description, location)
@@ -57,7 +62,10 @@ app.post("/api/report-issue", upload.single('image'), async (req, res) => {
 
     // Ensure required data is received
     if (!req.body.description || !req.body.location || !req.file) {
-      return res.status(400).json({ error: "Please provide all required details (description, location, image)" });
+      return res.status(400).json({
+        error:
+          "Please provide all required details (description, location, image)",
+      });
     }
 
     // Process the received data
