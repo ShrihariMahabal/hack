@@ -51,12 +51,12 @@ export default function Layout() {
 
         {/* Travel Tab */}
         <Tabs.Screen
-          name="travel"
+          name="lostandfound"
           options={{
             tabBarIcon: ({ color, size }) => (
-              <Ionicons name="airplane" color={color} size={24} />
+              <Ionicons name="search" color={color} size={24} />
             ),
-            tabBarLabel: "Travel",
+            tabBarLabel: "Lost",
             headerShown: false,
             headerTitle: "Where To?",
             headerTitleAlign: "center",
@@ -73,14 +73,14 @@ export default function Layout() {
 
         {/* Tickets Tab */}
         <Tabs.Screen
-          name="tickets"
+          name="community"
           options={{
             tabBarIcon: ({ color, size }) => (
-              <Ionicons name="ticket" color={color} size={24} />
+              <Ionicons name="people" color={color} size={24} />
             ),
-            tabBarLabel: "Tickets",
+            tabBarLabel: "Community",
             headerShown: true, // Show header
-            headerTitle: "Your Tickets", // Set header title
+            headerTitle: "Forum", // Set header title
             headerTitleAlign: "center",
             headerStyle: {
               backgroundColor: "#fff",
