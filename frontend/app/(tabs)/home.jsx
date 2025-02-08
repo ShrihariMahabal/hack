@@ -23,9 +23,10 @@ const IssueScreen = () => {
     });
     formData.append('description', description);
     formData.append('location', JSON.stringify(location));
+  
 
     try {
-      await axios.post('https://fcab-103-104-226-58.ngrok-free.app/api/report-issue', formData, {
+      await axios.post('https://cdbf-103-104-226-58.ngrok-free.app/api/report-issue', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       Alert.alert('Success', 'Issue reported successfully');
