@@ -40,9 +40,11 @@ const port = 5001;
 app.use(cors());
 app.use(express.json());
 const login = require("./routes/login");
-app.use("/login", login);
 
-// Test Route
+app.use("/login", login);
+app.use("/llm", llm);
+app.use("/gemini", gemini);
+
 app.get("/", (req, res) => {
   res.json({ message: "🚀 Express Server is Running!" });
 });
@@ -130,7 +132,7 @@ app.post("/send-sos", async (req, res) => {
 });
 
 // Route to handle form submission
-app.post("/api/report-issue", upload.single('image'), async (req, res) => {
+app.post("/api/report-issue", upload.single("image"), async (req, res) => {
   try {
     console.log("Request received");
     console.log("Body:", req.body); // Log form fields (description, location)
@@ -138,7 +140,10 @@ app.post("/api/report-issue", upload.single('image'), async (req, res) => {
 
     // Ensure required data is received
     if (!req.body.description || !req.body.location || !req.file) {
-      return res.status(400).json({ error: "Please provide all required details (description, location, image)" });
+      return res.status(400).json({
+        error:
+          "Please provide all required details (description, location, image)",
+      });
     }
 
     // Process the received data
@@ -162,12 +167,12 @@ app.post("/api/report-issue", upload.single('image'), async (req, res) => {
     res.status(500).json({ error: "There was an issue reporting the problem" });
   }
 });
-app.get('/api/issues', async (req, res) => {
+app.get("/api/issues", async (req, res) => {
   try {
     const issues = await Issue.find();
     res.json(issues); // Send the issues as JSON response
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching issues', error });
+    res.status(500).json({ message: "Error fetching issues", error });
   }
 });
 
