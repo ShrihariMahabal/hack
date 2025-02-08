@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Button, Image, Alert } from 'react-native';
+import { View, Image, Alert, TouchableOpacity, Text } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 
 const CaptureImage = ({ setImageUri }) => {
@@ -27,9 +27,18 @@ const CaptureImage = ({ setImageUri }) => {
 
   return (
     <View className="my-4">
-      <Button title="Capture Image" onPress={handleCaptureImage} />
+      <TouchableOpacity
+        onPress={handleCaptureImage}
+        className="bg-emerald-800 p-3 rounded-xl shadow-md"
+      >
+        <Text className="text-white text-center font-semibold">Capture Image</Text>
+      </TouchableOpacity>
+
       {selectedImage && (
-        <Image source={{ uri: selectedImage }} className="w-40 h-40 mt-3 rounded-xl" />
+        <Image
+          source={{ uri: selectedImage }}
+          className="w-40 h-40 mt-3 rounded-xl"
+        />
       )}
     </View>
   );

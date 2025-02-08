@@ -79,7 +79,7 @@ export default function Layout() {
               <Ionicons name="people" color={color} size={24} />
             ),
             tabBarLabel: "Community",
-            headerShown: true, // Show header
+            headerShown: false, // Show header
             headerTitle: "Forum", // Set header title
             headerTitleAlign: "center",
             headerStyle: {
