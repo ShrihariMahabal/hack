@@ -5,8 +5,21 @@ const connectDB = require("./services/connect");
 const multer = require("multer");
 const path = require("path");
 const Issue = require('./models/Issue');
+const { createServer } = require("http");
+const { Server } = require("socket.io");
+
 dotenv.config();
 const app = express();
+const server = createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+  },
+  pingInterval: 10000,            // Send ping every 10 seconds
+  pingTimeout: 5000,             // Wait 5 seconds for pong
+  transports: ['websocket'],     // Force WebSocket only
+  upgrade: false,                // Disable transport upgrades
+});
 
 const mongoUri = process.env.MONG_URI;
 
@@ -16,11 +29,11 @@ if (!mongoUri) {
 }
 var admin = require("firebase-admin");
 
-var serviceAccount = require("./spithack-dab01-firebase-adminsdk-fbsvc-ebd65a8127.json");
+// var serviceAccount = require("./spithack-dab01-firebase-adminsdk-fbsvc-ebd65a8127.json");
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-});
+// admin.initializeApp({
+//   credential: admin.credential.cert(serviceAccount),
+// });
 
 const port = 5001;
 // Middleware
@@ -47,6 +60,74 @@ const upload = multer({ storage });
 
 // Serve uploaded files statically
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+io.on("connection", (socket) => {
+  console.log(`User connected: ${socket.id}`);
+  
+  // Broadcast to all clients that a new user connected
+  io.emit("userCount", io.engine.clientsCount);
+  
+  socket.on("sendForumMessage", (message) => {
+    const messageWithId = {
+      ...message,
+      socketId: socket.id,
+      timestamp: new Date().toISOString()
+    };
+    io.emit("receiveForumMessage", messageWithId);
+  });
+  
+  socket.on("disconnect", () => {
+    console.log(`User disconnected: ${socket.id}`);
+    io.emit("userCount", io.engine.clientsCount);
+  });
+
+  socket.on("error", (error) => {
+    console.error("Socket error:", error);
+  });
+});
+
+app.post("/forum", (req, res) => {
+  try {
+    const { username, message } = req.body;
+    if (!username || !message) {
+      return res.status(400).json({ error: "Username and message are required" });
+    }
+
+    const forumMessage = {
+      username,
+      message,
+      timestamp: new Date().toISOString()
+    };
+    
+    io.emit("receiveForumMessage", forumMessage);
+
+    res.status(200).json({ success: true, message: "Forum message broadcasted" });
+  } catch (error) {
+    console.error("Error in /forum endpoint:", error.message);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// SOS Alert Endpoint
+app.post("/send-sos", async (req, res) => {
+  const { title, message } = req.body;
+  const messagePayload = {
+    notification: {
+      title: title || "🚨 Emergency Alert!",
+      body: message || "Someone nearby triggered an SOS!",
+    },
+    topic: "sos-alerts",
+  };
+
+  try {
+    await admin.messaging().send(messagePayload);
+    io.emit("receiveNotification", { title, message }); // Emit to connected clients
+    res.json({ success: true, message: "SOS Alert Sent!" });
+  } catch (error) {
+    console.error("Error sending notification:", error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
 
 // Route to handle form submission
 app.post("/api/report-issue", upload.single('image'), async (req, res) => {
@@ -81,30 +162,11 @@ app.post("/api/report-issue", upload.single('image'), async (req, res) => {
     res.status(500).json({ error: "There was an issue reporting the problem" });
   }
 });
-app.post("/send-sos", async (req, res) => {
-  const { title, message } = req.body;
-
-  const messagePayload = {
-    notification: {
-      title: title || "🚨 Emergency Alert!",
-      body: message || "Someone nearby triggered an SOS!",
-    },
-    topic: "sos-alerts",
-  };
-
-  try {
-    await admin.messaging().send(messagePayload);
-    res.json({ success: true, message: "SOS Alert Sent!" });
-  } catch (error) {
-    console.error("Error sending notification:", error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
 
 const start = async () => {
   try {
     await connectDB(mongoUri);
-    app.listen(port, () => {
+    server.listen(port, () => {
       console.log(`Server is running on http://localhost:${port}`);
     });
   } catch (err) {
