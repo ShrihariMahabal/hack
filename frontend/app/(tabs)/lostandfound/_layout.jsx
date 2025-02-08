@@ -18,9 +18,9 @@ export default function TravelLayout() {
                 }} 
             />
             <Stack.Screen 
-                name="routescreen" 
+                name="found" 
                 options={{
-                    headerTitle: 'Available Routes',
+                    headerTitle: 'Found Item',
                     headerTitleAlign: 'center',
                     headerStyle: {
                         height: 80,
@@ -32,9 +32,9 @@ export default function TravelLayout() {
                 }} 
             />
             <Stack.Screen 
-                name="mapscreen" 
+                name="lost" 
                 options={{
-                    headerTitle: 'Your Route',
+                    headerTitle: 'Lost Item',
                     headerTitleAlign: 'center',
                     headerStyle: {
                         height: 80,

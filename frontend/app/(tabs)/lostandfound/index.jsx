@@ -2,11 +2,9 @@ import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView, SafeAreaView, Image } from 'react-native';
 import { MaterialIcons } from "@expo/vector-icons";
 import LottieView from 'lottie-react-native';
-import { useRouter } from 'expo-router';
+import { router } from 'expo-router';
 
 export default function LostAndFound() {
-  const router = useRouter();
-
   return (
     <SafeAreaView className="flex-1 bg-white">
       <ScrollView 
@@ -28,7 +26,11 @@ export default function LostAndFound() {
         <View className="px-6 space-y-5">
           <TouchableOpacity 
             className="bg-emerald-800 mb-4 rounded-2xl p-5 flex-row items-center shadow-md active:scale-95"
-            onPress={() => router.push('/report-lost')}
+            onPress={() => {
+              router.push({
+                pathname: "/(tabs)/lostandfound/lost",
+              });
+            }}
           >
             <View className="bg-white rounded-full p-3">
               <MaterialIcons name="search" size={28} color="#065f46" />
@@ -44,7 +46,11 @@ export default function LostAndFound() {
 
           <TouchableOpacity 
             className="bg-white rounded-2xl p-5 flex-row items-center border-2 border-emerald-800 shadow-sm active:scale-95"
-            onPress={() => router.push('/report-found')}
+            onPress={() => {
+              router.push({
+                pathname: "/(tabs)/lostandfound/found",
+              });
+            }}
           >
             <View className="bg-emerald-800 rounded-full p-3">
               <MaterialIcons name="back-hand" size={28} color="white" />
