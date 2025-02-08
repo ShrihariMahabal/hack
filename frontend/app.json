@@ -1,17 +1,14 @@
 {
   "expo": {
     "name": "Travelo",
-    "slug": "Travelo",
+    "slug": "travello",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "travelo",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "permissions": [
-      "ACCESS_FINE_LOCATION",
-      "ACCESS_COARSE_LOCATION"
-    ],
+    "permissions": ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"],
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
@@ -19,6 +16,7 @@
       }
     },
     "android": {
+      "package": "com.deep.travelo",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -26,7 +24,8 @@
       "permissions": [
         "android.permission.ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION"
-      ]
+      ],
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "bundler": "metro",
@@ -34,6 +33,8 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
+      "@react-native-firebase/app",
+      "@react-native-firebase/messaging",
       "expo-router",
       [
         "expo-splash-screen",
@@ -48,6 +49,15 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "ac85d668-07b3-4b3f-bcd0-45e552b4d3c3"
+      },
+      "router": {
+        "origin": false
+      }
+    },
+    "owner": "deeeeep-p"
   }
 }
